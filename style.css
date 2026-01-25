@@ -1,66 +1,108 @@
-body {
-    background: #eef2f5;
+:root {
+    --bg: #0f172a;
+    --card: #020617;
+    --accent: #22c55e;
+    --danger: #ef4444;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+}
+
+* {
+    box-sizing: border-box;
     font-family: Arial, sans-serif;
 }
 
-.app {
-    max-width: 900px;
-    margin: 40px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.input-row {
+body {
+    background: linear-gradient(135deg, #020617, #0f172a);
+    color: var(--text);
+    min-height: 100vh;
     display: flex;
-    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.app {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 12px;
+    width: 420px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+h1 {
+    text-align: center;
     margin-bottom: 15px;
 }
 
-input, select {
-    padding: 8px;
+#balance {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.balance-update {
+    transform: scale(1.05);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input, select, button {
+    padding: 10px;
     border-radius: 6px;
-    border: 1px solid #ccc;
+    border: none;
 }
 
 button {
-    background: #004AAD;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
+    background: var(--accent);
+    color: black;
     cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.9;
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
     margin-top: 15px;
+    border-collapse: collapse;
 }
 
-th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+th {
+    text-align: left;
+    color: var(--muted);
+    padding-bottom: 5px;
+}
+
+td {
+    padding: 6px 0;
 }
 
 .income {
-    color: green;
+    color: var(--accent);
+    font-weight: bold;
 }
 
 .expense {
-    color: red;
+    color: var(--danger);
+    font-weight: bold;
 }
 
-tr {
-    animation: fade 0.3s ease;
+/* Category badges */
+.badge {
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    text-transform: uppercase;
 }
 
-@keyframes fade {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+.food { background: #334155; }
+.utilities { background: #1e293b; }
+.transport { background: #312e81; }
+.income-badge { background: #064e3b; }
