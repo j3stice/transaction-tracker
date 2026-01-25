@@ -1,66 +1,77 @@
-const descInput = document.getElementById("desc");
-const amountInput = document.getElementById("amount");
-const categorySelect = document.getElementById("category");
-const addBtn = document.getElementById("add-btn");
-const tableBody = document.getElementById("table-body");
-const filter = document.getElementById("filter");
+// Grab DOM elements
+const form = document.getElementById("transaction-form");
+const list = document.getElementById("transaction-list");
 const balanceText = document.getElementById("balance");
 
-// Load from storage
+// Load saved transactions or start empty
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
-// Save helper
-function save() {
-    localStorage.setItem("transactions", JSON.stringify(transactions));
-}
+// Handle form submission
+form.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-// Add transaction
-addBtn.addEventListener("click", () => {
-    const desc = descInput.value.trim();
-    const amount = Number(amountInput.value);
-    const category = categorySelect.value;
+    // Get user input values
+    const description = document.getElementById("description").value;
+    const amount = Number(document.getElementById("amount").value);
+    const category = document.getElementById("category").value;
 
-    if (!desc || !amount) return;
+    // Create transaction object
+    const transaction = { description, amount, category };
 
-    transactions.push({
-        date: new Date().toLocaleDateString(),
-        desc,
-        category,
-        amount
-    });
+    // Store transaction
+    transactions.push(transaction);
+    saveAndRender();
 
-    descInput.value = "";
-    amountInput.value = "";
-    save();
-    render();
+    // Reset form
+    form.reset();
 });
 
-// Filter change
-filter.addEventListener("change", render);
-
-// Render table
-function render() {
-    tableBody.innerHTML = "";
-    let balance = 0;
-
-    transactions.forEach(t => {
-        if (filter.value !== "All" && t.category !== filter.value) return;
-
-        balance += t.amount;
-
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${t.date}</td>
-            <td>${t.desc}</td>
-            <td>${t.category}</td>
-            <td class="${t.amount >= 0 ? 'income' : 'expense'}">
-                ${t.amount.toFixed(2)}
-            </td>
-        `;
-        tableBody.appendChild(row);
-    });
-
-    balanceText.textContent = `Current Balance: $${balance.toFixed(2)}`;
+// Save to localStorage and update UI
+function saveAndRender() {
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+    renderTransactions();
+    updateBalance();
 }
 
-render();
+// Render transactions in table
+function renderTransactions() {
+    list.innerHTML = "";
+
+    transactions.forEach(t => {
+        const row = document.createElement("tr");
+
+        // Decide if transaction is income or expense
+        const isIncome = t.category === "Income";
+
+        row.innerHTML = `
+            <td>${t.description}</td>
+            <td>
+                <span class="badge ${t.category.toLowerCase()} ${isIncome ? "income-badge" : ""}">
+                    ${t.category}
+                </span>
+            </td>
+            <td class="${isIncome ? "income" : "expense"}">
+                ${isIncome ? "+" : "-"}$${Math.abs(t.amount)}
+            </td>
+        `;
+
+        list.appendChild(row);
+    });
+}
+
+// Calculate and update balance
+function updateBalance() {
+    const total = transactions.reduce((sum, t) => {
+        return t.category === "Income" ? sum + t.amount : sum - t.amount;
+    }, 0);
+
+    balanceText.textContent = `Balance: $${total}`;
+
+    // Small animation for visual feedback
+    balanceText.classList.add("balance-update");
+    setTimeout(() => balanceText.classList.remove("balance-update"), 200);
+}
+
+// Initial render on page load
+renderTransactions();
+updateBalance();
